@@ -337,6 +337,14 @@
 
      https://usebottles.com/app/#fusion360
 
+🔹 または、Distrobox経由でFusion 360をインストールします:
+
+    distrobox create --image ghcr.io/cryinkfly/fusion360-distrobox:latest --name Fusion360
+    distrobox enter Fusion360 -- fusion360
+
+  デスクトップショートカットをエクスポートするには: `distrobox enter Fusion360 -- distrobox-export --app autodesk-fusion`
+  ユーザーデータ（ドキュメント、設定、アカウント）はホストの`~/.fusion360/`に保存されます。
+
 🔹これで、AutodeskFusion360を<a href="https://github.com/cryinkfly/Fusion-360---Linux-Wine-Version-/issues/44#issuecomment-890552181">使用</a>できるようになりました Linuxシステムで！
   </br> </br>
   <h3>📖利用可能なスクリプトリリースはどれですか？</h3>

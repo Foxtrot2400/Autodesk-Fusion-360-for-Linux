@@ -335,8 +335,16 @@
 
 🔹 或者您安装 Autodesk Fusion 360 并将其用作 Flatpak 应用程序：
 
-    https://usebottles.com/app/#fusion360    
-    
+    https://usebottles.com/app/#fusion360
+
+🔹 或者通过 Distrobox 安装 Fusion 360:
+
+    distrobox create --image ghcr.io/cryinkfly/fusion360-distrobox:latest --name Fusion360
+    distrobox enter Fusion360 -- fusion360
+
+  导出桌面快捷方式: `distrobox enter Fusion360 -- distrobox-export --app autodesk-fusion`
+  用户数据（文档、设置、账户）保存在主机的 `~/.fusion360/` 中。
+
 🔹 现在，您可以<a href="https://github.com/cryinkfly/Fusion-360---Linux-Wine-Version-/issues/44#issuecomment-890552181">使用</a> Autodesk Fusion 360 在你的 Linux 系统上！
   </br></br>
   <h3>📖 哪些脚本版本可用？</h3>

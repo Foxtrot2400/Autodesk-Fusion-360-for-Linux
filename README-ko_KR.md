@@ -337,6 +337,14 @@
 
  <del>    https://usebottles.com/app/#fusion360 </del>
 
+🔹 또는 Distrobox를 통해 Fusion 360을 설치합니다:
+
+    distrobox create --image ghcr.io/cryinkfly/fusion360-distrobox:latest --name Fusion360
+    distrobox enter Fusion360 -- fusion360
+
+  데스크톱 바로가기를 내보내려면: `distrobox enter Fusion360 -- distrobox-export --app autodesk-fusion`
+  사용자 데이터(문서, 설정, 계정)는 호스트의 `~/.fusion360/`에 저장됩니다.
+
 🔹 이제 Autodesk Fusion 360을 <a href="https://github.com/cryinkfly/Fusion-360---Linux-Wine-Version-/issues/44#issuecomment-890552181">사용</a>할 수 있습니다. 당신의 리눅스 시스템에!
   </br></br>
   <h3>📖 어떤 스크립트 릴리스를 사용할 수 있나요?</h3>

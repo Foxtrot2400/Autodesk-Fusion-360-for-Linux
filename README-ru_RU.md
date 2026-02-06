@@ -337,6 +337,14 @@
 
     https://usebottles.com/app/#fusion360
 
+🔹 Или установите Fusion 360 через Distrobox:
+
+    distrobox create --image ghcr.io/cryinkfly/fusion360-distrobox:latest --name Fusion360
+    distrobox enter Fusion360 -- fusion360
+
+  Для экспорта ярлыка на рабочий стол: `distrobox enter Fusion360 -- distrobox-export --app autodesk-fusion`
+  Пользовательские данные (документы, настройки, аккаунт) сохраняются в `~/.fusion360/` на хосте.
+
 🔹 Теперь вы можете <a href="https://github.com/cryinkfly/Fusion-360---Linux-Wine-Version-/issues/44#issuecomment-890552181">использовать</a> Autodesk Fusion 360. в вашей системе Linux!
   </br></br>
   <h3>📖 Какие версии скриптов доступны?</h3>
