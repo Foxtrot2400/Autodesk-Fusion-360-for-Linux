@@ -48,3 +48,4 @@ jobs:
           tags: |
             ghcr.io/${{ env.OWNER_LC }}/fusion360-distrobox:latest
             ghcr.io/${{ env.OWNER_LC }}/fusion360-distrobox:${{ github.sha }}
+  
