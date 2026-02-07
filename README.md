@@ -341,7 +341,13 @@
 
   For the SSO-Login bug use this Workaround: https://github.com/cryinkfly/Autodesk-Fusion-360-for-Linux/issues/460#issuecomment-2315888332
 
-🔹 Or installing Fusion360 via Distrobox on a Gnome Wayland Desktop: https://github.com/cryinkfly/Autodesk-Fusion-360-for-Linux/issues/557
+🔹 Or install Fusion 360 via Distrobox:
+
+    distrobox create --image ghcr.io/cryinkfly/fusion360-distrobox:latest --name Fusion360
+    distrobox enter Fusion360 -- fusion360
+
+  To export the desktop shortcut to your host: `distrobox enter Fusion360 -- distrobox-export --app autodesk-fusion`
+  User data (documents, settings, account) is persisted in `~/.fusion360/` on the host.
 
 🔹 Now, You can <a href="https://github.com/cryinkfly/Fusion-360---Linux-Wine-Version-/issues/44#issuecomment-890552181">use</a> Autodesk Fusion 360 on your Linux system!
  </br></br>

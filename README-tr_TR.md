@@ -341,6 +341,14 @@
 
   SSO-Login hatası için bu Çözümü kullanın: https://github.com/cryinkfly/Autodesk-Fusion-360-for-Linux/issues/460#issuecomment-2315888332
 
+🔹 Veya Fusion 360'ı Distrobox üzerinden kurun:
+
+    distrobox create --image ghcr.io/cryinkfly/fusion360-distrobox:latest --name Fusion360
+    distrobox enter Fusion360 -- fusion360
+
+  Masaüstü kısayolunu dışa aktarmak için: `distrobox enter Fusion360 -- distrobox-export --app autodesk-fusion`
+  Kullanıcı verileri (belgeler, ayarlar, hesap) ana makinedeki `~/.fusion360/` dizininde saklanır.
+
 🔹 Artık Linux sisteminizde <a href="https://github.com/cryinkfly/Fusion-360---Linux-Wine-Version-/issues/44#issuecomment-890552181">Autodesk Fusion 360’ı kullanabilirsiniz</a>!
  </br></br>
  <h3>📖 Hangi script sürümleri mevcut?</h3>

@@ -7,8 +7,8 @@
 # Author URI:   https://cryinkfly.com                                                              #
 # License:      MIT                                                                                #
 # Copyright (c) 2020-2026                                                                          #
-# Time/Date:    00:55/25.01.2026                                                                   #
-# Version:      2.0.6-Alpha                                                                        #
+# Time/Date:    00:00/06.02.2026                                                                   #
+# Version:      2.0.7-Alpha                                                                        #
 ####################################################################################################
 
 ###############################################################################################################################################################
@@ -25,6 +25,7 @@ NOCOLOR=$'\033[0m'
 SELECTED_OPTION="$1"
 SELECTED_DIRECTORY="$2"
 SELECTED_EXTENSIONS="$3"
+HEADLESS_MODE="$4"
 
 if [ -z "$SELECTED_DIRECTORY" ] || [ "$SELECTED_DIRECTORY" == "--default" ]; then
     SELECTED_DIRECTORY="$HOME/.autodesk_fusion"
@@ -35,6 +36,17 @@ if [ "$SELECTED_EXTENSIONS" == "--full" ]; then
     SELECTED_EXTENSIONS="CzechlocalizationforF360,HP3DPrintersforAutodesk®Fusion®,MarkforgedforAutodesk®Fusion®,OctoPrintforAutodesk®Fusion360™,UltimakerDigitalFactoryforAutodeskFusion360™"
 else
     SELECTED_EXTENSIONS=""
+fi
+
+# Headless mode: skip all display/GPU/interactive checks (for Docker builds)
+if [ "$HEADLESS_MODE" == "--headless" ]; then
+    HEADLESS=1
+    SECURE_BOOT="0"
+    GPU_DRIVER="DXVK"
+    GET_VRAM_MEGABYTES="4096"
+    MONITOR_RESOLUTION="1920x1080"
+else
+    HEADLESS=0
 fi
 
 # URL to download translations po. files <-- Still in progress!!!
@@ -364,12 +376,18 @@ function check_option() {
             sleep 2
             echo -e "$(gettext "${GREEN}Selected extensions: ${YELLOW}$SELECTED_EXTENSIONS${NOCOLOR}")"
             sleep 2
-            deactivate_window_not_responding_dialog
+            if [ "$HEADLESS" -eq 0 ]; then
+                deactivate_window_not_responding_dialog
+            fi
             create_data_structure
-            check_secure_boot
-            check_ram
-            check_gpu_driver
-            check_gpu_vram
+            if [ "$HEADLESS" -eq 0 ]; then
+                check_secure_boot
+                check_ram
+                check_gpu_driver
+                check_gpu_vram
+            else
+                echo -e "${YELLOW}Headless mode: skipping hardware checks${NOCOLOR}"
+            fi
             check_disk_space
             download_files
             check_and_install_wine
@@ -379,9 +397,11 @@ function check_option() {
             wine_autodesk_fusion_install_extensions
             autodesk_fusion_shortcuts_load
             autodesk_fusion_safe_logfile
-            reset_window_not_responding_dialog
-            xdg-open "https://cryinkfly.com/sponsors/"
-            run_wine_autodesk_fusion
+            if [ "$HEADLESS" -eq 0 ]; then
+                reset_window_not_responding_dialog
+                xdg-open "https://cryinkfly.com/sponsors/"
+                run_wine_autodesk_fusion
+            fi
             exit;;
         *)
             echo -e "$(gettext "${RED}Invalid option! Please use the --install or --uninstall flag!")${NOCOLOR}";

@@ -336,7 +336,15 @@
 🔹  Oppure puoi installare e utilizzare Autodesk Fusion 360 come app Flatpak:
 
      https://usebottles.com/app/#fusion360
-    
+
+🔹 Oppure installa Fusion 360 tramite Distrobox:
+
+    distrobox create --image ghcr.io/cryinkfly/fusion360-distrobox:latest --name Fusion360
+    distrobox enter Fusion360 -- fusion360
+
+  Per esportare il collegamento sul desktop: `distrobox enter Fusion360 -- distrobox-export --app autodesk-fusion`
+  I dati utente (documenti, impostazioni, account) sono salvati in `~/.fusion360/` sull'host.
+
 🔹 Ora puoi <a href="https://github.com/cryinkfly/Fusion-360---Linux-Wine-Version-/issues/44#issuecomment-890552181">utilizzare</a> Autodesk Fusion 360 sul tuo sistema Linux!
   </br></br>
   <h3>📖 Quali versioni di script sono disponibili?</h3>
