@@ -26,12 +26,21 @@ RUN apt-get update \
         less \
         lsof \
         gpg \
+        fonts-wine \
+        libgl1 \
+        libasound2 \
+        libpulse0 \
+        libxrandr2 \
+        libxi6 \
+        libxcursor1 \
+        libxinerama1 \
+        
     && dpkg --add-architecture i386 \
     && mkdir -pm755 /etc/apt/keyrings \
     && wget -O - "$WINE_KEY" | gpg --batch --yes --dearmor -o "$WINE_KEY_DEST" \
     && wget -NP /etc/apt/sources.list.d/ "$WINE_SOURCE" \
     && apt-get update \
-    && apt-get install -y winehq-stable \
+    && apt-get install -y winehq-stable wine32 \
     && apt-get install -y --no-install-recommends \
         systemd \
         debhelper \
@@ -58,13 +67,27 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Initialize Wine prefix headlessly
+ENV WINEPREFIX=/app/.wine \
+    WINEARCH=win64
+
+RUN mkdir -p $WINEPREFIX \
+    && Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp & \
+    XVFB_PID=$! \
+    && sleep 5 \
+    && DISPLAY=:99 wineboot --init \
+    && wineserver -w \
+    && kill $XVFB_PID
+
 # Run Fusion 360 installer with virtual display for Wine
 COPY ./files/setup/autodesk_fusion_installer_x86-64.sh \
     /usr/local/bin/install_fusion
 RUN chmod +x /usr/local/bin/install_fusion \
-    && Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp & XVFB_PID=$! \
-    && sleep 2 \
-    && DISPLAY=:99 install_fusion --install --default --full --headless \
+    && Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp & \
+    XVFB_PID=$! \
+    && sleep 5 \
+    && DISPLAY=:99 /usr/local/bin/install_fusion --install --default --full --headless \
+    && wineserver -w \
     && kill $XVFB_PID \
     && rm -f /usr/local/bin/install_fusion
 
