@@ -75,17 +75,24 @@ RUN apt-get update \
 RUN dbus-uuidgen > /etc/machine-id
 RUN chmod 1777 /tmp
 
-# Initialize Wine prefix headlessly
+RUN useradd -m -d /app fusionuser \
+    && chown -R fusionuser:fusionuser /app
+USER fusionuser
+WORKDIR /app
+
+# Initialize Wine prefix headless
 ENV PATH="/opt/wine-stable/bin:$PATH" \
-    LD_LIBRARY_PATH="/opt/wine-stable/lib:/opt/wine-stable/lib64:$LD_LIBRARY_PATH" \
+    LD_LIBRARY_PATH="/opt/wine-stable/lib64:/opt/wine-stable/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/i386-linux-gnu" \
     WINEPREFIX="/app/.wine" \
     WINEARCH=win64 \
     WINEDEBUG=-all \
     DISPLAY=:99
 
 RUN mkdir -p $WINEPREFIX \
-    && Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp & \
-    sleep 5 \
+    && (Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp &) \
+    && sleep 5 \
+    && which wine \
+    && wine --version \
     && wineboot --init \
     && wineserver -w \
     && pkill Xvfb
