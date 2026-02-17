@@ -75,32 +75,29 @@ RUN apt-get update \
 RUN dbus-uuidgen > /etc/machine-id
 RUN chmod 1777 /tmp
 
-ENV DISPLAY=:99
-
 # Initialize Wine prefix headlessly
-ENV WINEPREFIX=/app/.wine \
+ENV PATH="/opt/wine-stable/bin:$PATH" \
+    LD_LIBRARY_PATH="/opt/wine-stable/lib:/opt/wine-stable/lib64:$LD_LIBRARY_PATH" \
+    WINEPREFIX="/app/.wine" \
     WINEARCH=win64 \
-    WINEDEBUG=-all
+    WINEDEBUG=-all \
+    DISPLAY=:99
 
 RUN mkdir -p $WINEPREFIX \
     && Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp & \
-    XVFB_PID=$! \
-    && sleep 5 \
-    && export DISPLAY=:99 \
+    sleep 5 \
     && wineboot --init \
     && wineserver -w \
-    && kill $XVFB_PID
+    && pkill Xvfb
 
 # Run Fusion 360 installer with virtual display for Wine
-COPY ./files/setup/autodesk_fusion_installer_x86-64.sh \
-    /usr/local/bin/install_fusion
+COPY ./files/setup/autodesk_fusion_installer_x86-64.sh /usr/local/bin/install_fusion
 RUN chmod +x /usr/local/bin/install_fusion \
     && Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp & \
-    XVFB_PID=$! \
-    && sleep 5 \
-    && DISPLAY=:99 /usr/local/bin/install_fusion --install --default --full --headless \
+    sleep 5 \
+    && /usr/local/bin/install_fusion --install --default --full --headless \
     && wineserver -w \
-    && kill $XVFB_PID \
+    && pkill Xvfb \
     && rm -f /usr/local/bin/install_fusion
 
 # Cleanup unnecessary packages and files
