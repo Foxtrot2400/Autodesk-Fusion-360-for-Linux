@@ -72,52 +72,51 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN dbus-uuidgen > /etc/machine-id
-RUN chmod 1777 /tmp
 
-RUN useradd -m -d /app fusionuser \
-    && chown -R fusionuser:fusionuser /app
+RUN dbus-uuidgen > /etc/machine-id && \
+    mkdir -p /tmp/.X11-unix && \
+    chmod 1777 /tmp/.X11-unix
+
+RUN useradd -m -d /app fusionuser && \
+    chown -R fusionuser:fusionuser /app
+
+# Set Environment
+ENV PATH="/opt/wine-stable/bin:$PATH" \
+    LD_LIBRARY_PATH="/opt/wine-stable/lib64:/opt/wine-stable/lib" \
+    WINEPREFIX="/app/.wine" \
+    WINEARCH=win64 \
+    WINEDEBUG=-all \
+    DISPLAY=:99
+
+# Switch to user ONLY for the Wine tasks
 USER fusionuser
 WORKDIR /app
 
-# Initialize Wine prefix headless
-ENV PATH="/opt/wine-stable/bin:$PATH" \
-    LD_LIBRARY_PATH="/opt/wine-stable/lib64:/opt/wine-stable/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/i386-linux-gnu" \
-    WINEPREFIX="/app/.wine" \
-    WINEARCH=win64 \
-    DISPLAY=:99
-
-RUN mkdir -p $WINEPREFIX \
-    && (Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp &) \
-    && sleep 5 \
-    && which wine \
-    && wine --version \
-    && wineboot --init \
-    && wineserver -w \
-    && pkill Xvfb
+RUN (Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp &) && \
+    sleep 5 && \
+    wineboot --init && \
+    wineserver -w && \
+    pkill Xvfb
 
 # Run Fusion 360 installer with virtual display for Wine
-COPY ./files/setup/autodesk_fusion_installer_x86-64.sh /usr/local/bin/install_fusion
-RUN chmod +x /usr/local/bin/install_fusion \
-    && Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp & \
-    sleep 5 \
-    && /usr/local/bin/install_fusion --install --default --full --headless \
+COPY --chown=fusionuser:fusionuser ./files/setup/autodesk_fusion_installer_x86-64.sh /tmp/install_fusion.sh
+RUN chmod +x /tmp/install_fusion.sh \
+    && (Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp &) \
+    && sleep 5 \
+    && /tmp/install_fusion.sh --install --default --full --headless \
     && wineserver -w \
     && pkill Xvfb \
-    && rm -f /usr/local/bin/install_fusion
+    && rm -f /tmp/install_fusion.sh
 
 # Cleanup unnecessary packages and files
-RUN apt-get remove --purge -y \
-        debhelper \
-        xvfb \
-        mokutil \
+USER root
+RUN apt-get remove --purge -y debhelper xvfb mokutil \
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+USER fusionuser
 
 # Install wrapper and desktop file for Distrobox export
-COPY ./files/setup/data/fusion360-wrapper.sh \
-    /usr/local/bin/fusion360
-COPY ./files/setup/data/autodesk-fusion.desktop \
-    /usr/share/applications/autodesk-fusion.desktop
+COPY --chown=fusionuser:fusionuser ./files/setup/data/fusion360-wrapper.sh /usr/local/bin/fusion360
+COPY --chown=fusionuser:fusionuser ./files/setup/data/autodesk-fusion.desktop /usr/share/applications/autodesk-fusion.desktop
 RUN chmod +x /usr/local/bin/fusion360
