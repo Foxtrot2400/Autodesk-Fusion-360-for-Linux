@@ -34,7 +34,19 @@ RUN apt-get update \
         libxi6 \
         libxcursor1 \
         libxinerama1 \
-        
+        libc6:i386 \
+        libstdc++6:i386 \
+        libx11-6:i386 \
+        libxext6:i386 \
+        libxrender1:i386 \
+        libxi6:i386 \
+        libgl1:i386 \
+        libasound2:i386 \
+        libpulse0:i386 \
+        libldap-2.5-0:i386 \
+        libgnutls30:i386 \
+        libpng16-16:i386 \
+        libxml2:i386 \
     && dpkg --add-architecture i386 \
     && mkdir -pm755 /etc/apt/keyrings \
     && wget -O - "$WINE_KEY" | gpg --batch --yes --dearmor -o "$WINE_KEY_DEST" \
@@ -66,6 +78,8 @@ RUN apt-get update \
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+RUN dbus-uuidgen > /etc/machine-id
 
 # Initialize Wine prefix headlessly
 ENV WINEPREFIX=/app/.wine \
