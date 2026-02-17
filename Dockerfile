@@ -85,7 +85,6 @@ ENV PATH="/opt/wine-stable/bin:$PATH" \
     LD_LIBRARY_PATH="/opt/wine-stable/lib64:/opt/wine-stable/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/i386-linux-gnu" \
     WINEPREFIX="/app/.wine" \
     WINEARCH=win64 \
-    WINEDEBUG=-all \
     DISPLAY=:99
 
 RUN mkdir -p $WINEPREFIX \
