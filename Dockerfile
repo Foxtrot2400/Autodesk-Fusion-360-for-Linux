@@ -1,4 +1,4 @@
-FROM debian:trixie-slim
+FROM debian:bookworm-slim
 
 # Set environment variables for container
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -7,7 +7,9 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # Set environment variables for setup
 ENV WINE_KEY="https://dl.winehq.org/wine-builds/winehq.key" \
     WINE_KEY_DEST="/etc/apt/keyrings/winehq-archive.key" \
-    WINE_SOURCE="https://dl.winehq.org/wine-builds/debian/dists/trixie/winehq-trixie.sources"
+    WINE_SOURCE="https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources" 
+# Old wine source from trixie     WINE_SOURCE="https://dl.winehq.org/wine-builds/debian/dists/trixie/winehq-trixie.sources"
+# Trixie seems to be failing with builds, so now we're trying with bookworm.
 
 # Install dependencies
 RUN apt-get update \
