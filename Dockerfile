@@ -34,26 +34,17 @@ RUN apt-get update \
         libxi6 \
         libxcursor1 \
         libxinerama1 \
-        libc6:i386 \
-        libstdc++6:i386 \
-        libx11-6:i386 \
-        libxext6:i386 \
-        libxrender1:i386 \
-        libxi6:i386 \
-        libgl1:i386 \
-        libasound2:i386 \
-        libpulse0:i386 \
-        libldap-2.5-0:i386 \
-        libgnutls30:i386 \
-        libpng16-16:i386 \
-        libxml2:i386 \
     && dpkg --add-architecture i386 \
     && mkdir -pm755 /etc/apt/keyrings \
     && wget -O - "$WINE_KEY" | gpg --batch --yes --dearmor -o "$WINE_KEY_DEST" \
     && wget -NP /etc/apt/sources.list.d/ "$WINE_SOURCE" \
     && apt-get update \
-    && apt-get install -y winehq-stable wine32 \
-    && apt-get install -y --no-install-recommends \
+    && apt-get install -y --install-recommends \
+        winehq-stable \
+        wine32 \
+        wine64 \
+        libwine \
+        libwine:i386 \
         systemd \
         debhelper \
         samba \
@@ -80,16 +71,21 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 RUN dbus-uuidgen > /etc/machine-id
+RUN chmod 1777 /tmp
+
+ENV DISPLAY=:99
 
 # Initialize Wine prefix headlessly
 ENV WINEPREFIX=/app/.wine \
-    WINEARCH=win64
+    WINEARCH=win64 \
+    WINEDEBUG=-all
 
 RUN mkdir -p $WINEPREFIX \
     && Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp & \
     XVFB_PID=$! \
     && sleep 5 \
-    && DISPLAY=:99 wineboot --init \
+    && export DISPLAY=:99 \
+    && wineboot --init \
     && wineserver -w \
     && kill $XVFB_PID
 
